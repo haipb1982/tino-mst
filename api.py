@@ -1,6 +1,7 @@
 import requests
 import time
 import json
+import sys
 from pyquery import PyQuery
 import flask
 from flask import request, jsonify
@@ -113,5 +114,12 @@ def api_id():
     print(results)
     return jsonify(results)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=6868)
+if __name__ == '__main__':    
+    
+    try:
+        if (sys.argv[1]):
+            app.run(host='0.0.0.0', port=sys.argv[1])
+    except:
+        app.run()
+    
+        
