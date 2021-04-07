@@ -35,7 +35,7 @@ def api_id():
     
     try:
         s = requests.session()
-        s.mount('https://cunghocwp.com', SourcePortAdapter(6000))
+        s.mount('https://cunghocwp.com', SourcePortAdapter(6002))
         res = s.get('https://cunghocwp.com', timeout=30)
         s.close()
         results.append(res.text)
