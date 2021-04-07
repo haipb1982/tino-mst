@@ -7,6 +7,7 @@ import flask
 from flask import request, jsonify
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
+import random
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -35,7 +36,7 @@ def api_id():
     
     try:
         s = requests.session()
-        s.mount('https://cunghocwp.com', SourcePortAdapter(6002))
+        s.mount('https://cunghocwp.com', SourcePortAdapter(random.randint(6000, 6099)))
         res = s.get('https://cunghocwp.com', timeout=30)
         s.close()
         results.append(res.text)
