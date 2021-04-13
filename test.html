@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>attributeHas demo</title>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+</head>
+
+<body>
+
+    <div>no id</div>
+    <div id="hey">with id</div>
+    <div id="there">has an id</div>
+    <div>nope</div>
+
+    <hr>
+
+    <table class="table-taxinfo">
+        <thead>
+            <tr>
+                <th colspan="2" itemprop="name"><span class="copy" data-original-title="" title="">CÔNG TY TRÁCH NHIỆM HỮU HẠN TIẾN ĐẠT GIÀU</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><i class="fa fa-reorder"></i> Tên viết tắt</td>
+                <td itemprop="alternateName"><span class="copy" data-original-title="" title="">CTY TNHH TIẾN ĐẠT GIÀU</span></td>
+            </tr>
+            <tr>
+                <td><i class="fa fa-hashtag"></i> Mã số thuế</td>
+                <td itemprop="taxID"><span class="copy" data-original-title="" title="">1702226634</span></td>
+            </tr>
+            <tr>
+                <td><i class="fa fa-map-marker"></i> Địa chỉ</td>
+                <td itemprop="address"><span class="copy" data-original-title="" title="">Tổ 3, ấp Bãi Chướng, Xã Hòn Nghệ, Huyện Kiên Lương, Tỉnh Kiên Giang, Việt Nam</span></td>
+            </tr>
+            <tr itemprop="alumni" itemscope="" itemtype="http://schema.org/Person">
+                <td><i class="fa fa-user"></i> Người đại diện</td>
+                <td><span itemprop="name"><a href="https://masothue.com/Search/?q=NGUY%E1%BB%84N+THANH+VI%E1%BB%86T&amp;type=legalName" title="tra cứu mã số thuế công ty có giám đốc NGUYỄN THANH VIỆT">NGUYỄN THANH VIỆT</a></span> </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Cập nhật mã số thuế <strong>1702226634</strong> lần cuối vào <em>2021-04-12 10:54:34</em>. </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Using .one() so the handler is executed at most once
+        // per element per event type
+        $("div[id]").one("click", function() {
+            var idString = $(this).text() + " = " + $(this).attr("id");
+            $(this).text(idString);
+        });
+
+        var all = $("[itemprop]").map(function() {
+            return [$(this).attr('itemprop'), this.innerHTML];
+        }).get();
+
+        // console.log(all);
+
+
+        var test = $(".table-taxinfo [itemprop]").get();
+
+        console.log(test)
+    </script>
+
+</body>
+
+</html>
