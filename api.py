@@ -10,6 +10,12 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 #################################
+def writeLog(strErr):    
+    file_object = open('errorLog.log', 'a')
+    file_object.writelines(strErr)
+    file_object.close()
+
+
 # qstr : 111655768
 def crawlDataBySearch(qstr):
 
@@ -22,7 +28,12 @@ def crawlDataBySearch(qstr):
         'force-search': '1', 
         'numRows': 1,
         'taxinfo':'',
-        'taxdetails':''
+        'taxdetails':'',
+        'name':'',
+        'alternateName':'',
+        'taxID':'',
+        'address':'',
+        'alumni':'',
     }
 
     try:
@@ -30,14 +41,14 @@ def crawlDataBySearch(qstr):
         # q=111655768&type=auto&token=e2rCP0ONvG&force-search=1
         myobj = {'q': qstr,'type':'auto','token':'','force-search':'1'}
 
-        print(myobj)
+        # print(myobj)
 
         response = requests.post(url + '/Ajax/Search', data = myobj)
 
         res = json.loads(response.text)
 
-        print(response.status_code)
-        print(response.json())
+        # print(response.status_code)
+        # print(response.json())
         # print(json.loads(response.text))
 
         result['id'] = qstr
@@ -54,23 +65,26 @@ def crawlDataBySearch(qstr):
 
         response = requests.get(url + res["url"])
 
-        pq = PyQuery(response.content)
-        # tag = pq('div#id') # or # tag = pq('div.class')
+        pq = PyQuery(response.content)        
+
         tag1 = pq('table.table-taxinfo')
-        # print(tag1.text())
-
         tag2 = pq('table.table')
-        # print(tag2.text())
 
-        result['taxinfo'] = tag1.text()
-        print('tag1.text()')
-        print(tag1.text())
-        result['taxdetails'] = tag2.text()
-        print('tag2.text()')
-        print(tag2.text())
+        result['taxinfo'] = tag1.html()
+        result['taxdetails'] = tag2.html()
+
+        result['name'] =tag1('[itemprop=name]').text()
+        result['alternateName'] =tag1('[itemprop=alternateName]').text()
+        result['taxID'] =tag1('[itemprop=taxID]').text()
+        result['address'] =tag1('[itemprop=address]').text()
+        result['alumni'] = tag1('[itemprop=alumni]').text().replace('Người đại diện','').strip()
+
+        # print(result)
 
     except Exception as exc: 
-        print(f'{qstr} has error : {exc}')
+        mess = f'{qstr} has error : {exc}'
+        writeLog(mess)
+        print(mess)
 
     return result
 
@@ -109,9 +123,9 @@ def api_id():
     
     mstData =  crawlDataBySearch(id)
     # create_json_file(fromMST,mstData,'./results/'+ str(fromMST) + '.json')
-    print(mstData)
+    # print(mstData)
     results.append(mstData)
-    print(results)
+    # print(results)
     return jsonify(results)
 
 if __name__ == '__main__':    

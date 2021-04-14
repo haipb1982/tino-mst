@@ -22,7 +22,7 @@ with open("test.html", "r") as f:
 
     print(doc('[itemprop=address]').text())
 
-    print(doc('[itemprop=alumni]').text())
+    print(doc('[itemprop=alumni]').text().replace('Người đại diện','').strip())
 
 
     
