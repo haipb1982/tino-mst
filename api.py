@@ -5,11 +5,25 @@ import sys
 from pyquery import PyQuery
 import flask
 from flask import request, jsonify
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.poolmanager import PoolManager
+import random
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 #################################
+class SourcePortAdapter(HTTPAdapter):
+    """"Transport adapter" that allows us to set the source port."""
+    def __init__(self, port, *args, **kwargs):
+        self._source_port = port
+        super(SourcePortAdapter, self).__init__(*args, **kwargs)
+
+    def init_poolmanager(self, connections, maxsize, block=False):
+        self.poolmanager = PoolManager(
+            num_pools=connections, maxsize=maxsize,
+            block=block, source_address=('', self._source_port))
+
 def writeLog(strErr):    
     file_object = open('errorLog.log', 'a')
     file_object.writelines(strErr)
@@ -38,18 +52,18 @@ def crawlDataBySearch(qstr):
 
     try:
         url = 'https://masothue.com'
+        urlSearch = url + '/Ajax/Search'
         # q=111655768&type=auto&token=e2rCP0ONvG&force-search=1
         myobj = {'q': qstr,'type':'auto','token':'','force-search':'1'}
 
-        # print(myobj)
+        # response = requests.post(url + '/Ajax/Search', data = myobj)
 
-        response = requests.post(url + '/Ajax/Search', data = myobj)
+        s = requests.session()
+        s.mount(urlSearch, SourcePortAdapter(random.randint(6000, 6099)))
+        response = s.post(urlSearch , data = myobj)
+        s.close()
 
         res = json.loads(response.text)
-
-        # print(response.status_code)
-        # print(response.json())
-        # print(json.loads(response.text))
 
         result['id'] = qstr
         if (res['success'] !=1):
@@ -63,7 +77,11 @@ def crawlDataBySearch(qstr):
 
         time.sleep(1)
 
-        response = requests.get(url + res["url"])
+        # response = requests.get(url + res["url"])
+        s = requests.session()
+        s.mount(url, SourcePortAdapter(random.randint(6000, 6099)))
+        response = s.get(url + res["url"])
+        s.close()
 
         pq = PyQuery(response.content)        
 
